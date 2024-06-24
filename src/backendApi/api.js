@@ -20,9 +20,9 @@ export const saveDrawing = async (name, lines) => {
     }
 };
 
-export const loadDrawing = async (name) => {
+export const loadDrawing = async (id) => {
     try {
-        const response = await axios.get(`/synthdata/load/${name}`);
+        const response = await axios.get(`/synthdata/load/${id}`);
         return response.data;
     } catch (error) {
         console.error('Error loading drawing', error);

@@ -36,21 +36,18 @@ const App = () => {
         }
     };
 
-    const handleLoad = async () => {
-        const name = prompt('Enter the name of the drawing to load:');
-        if (name) {
-            try {
-                const drawing = await loadDrawing(name);
-                if (drawing) {
-                    setLines(drawing.lines);
-                    setTrackName(drawing.name);
-                    setOriginalTrackName(drawing.name);
-                } else {
-                    alert('Drawing not found!');
-                }
-            } catch (error) {
-                alert('Error loading drawing.');
+    const handleLoad = async (id) => {
+        try {
+            const drawing = await loadDrawing(id);
+            if (drawing) {
+                setLines(drawing.lines);
+                setTrackName(drawing.name);
+                setOriginalTrackName(drawing.name);
+            } else {
+                alert('Drawing not found!');
             }
+        } catch (error) {
+            alert('Error loading drawing.');
         }
     };
 
@@ -99,7 +96,6 @@ const App = () => {
             <MinimalDrawingCanvas canvasRef={canvasRef} lines={lines} setLines={setLines} color={color} isErasing={isErasing} />
             <div>
                 <button onClick={handleSave}>Save Drawing</button>
-                <button onClick={handleLoad}>Load Drawing</button>
                 <button onClick={clearDrawing}>Clear Drawing</button>
             </div>
             <div>
@@ -108,6 +104,7 @@ const App = () => {
                     {drawings.map(drawing => (
                         <li key={drawing._id}>
                             {drawing.name} (ID: {drawing._id})
+                            <button onClick={() => handleLoad(drawing._id)}>Load</button>
                             <button onClick={() => handleDelete(drawing._id)}>Delete</button>
                         </li>
                     ))}
