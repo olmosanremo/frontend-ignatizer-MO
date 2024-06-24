@@ -1,33 +1,51 @@
 import axios from 'axios';
 
-const API_URL = 'http://localhost:3000/api/synthdata';
+export const getAllDrawings = async () => {
+    try {
+        const response = await axios.get('/synthdata/all');
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching drawings', error);
+        throw error;
+    }
+};
 
 export const saveDrawing = async (name, lines) => {
     try {
-        const response = await axios.post(`${API_URL}/save`, { name, lines });
+        const response = await axios.post('/synthdata/save', { name, lines });
         return response.data;
     } catch (error) {
-        console.error('Error saving drawing:', error.response ? error.response.data : error.message);
+        console.error('Error saving drawing', error);
         throw error;
     }
 };
 
 export const loadDrawing = async (name) => {
     try {
-        const response = await axios.get(`${API_URL}/load/${name}`);
+        const response = await axios.get(`/synthdata/load/${name}`);
         return response.data;
     } catch (error) {
-        console.error('Error loading drawing:', error.response ? error.response.data : error.message);
+        console.error('Error loading drawing', error);
         throw error;
     }
 };
 
 export const updateDrawing = async (name, lines) => {
     try {
-        const response = await axios.patch(`${API_URL}/update`, { name, lines });
+        const response = await axios.patch('/synthdata/update', { name, lines });
         return response.data;
     } catch (error) {
-        console.error('Error updating drawing:', error.response ? error.response.data : error.message);
+        console.error('Error updating drawing', error);
+        throw error;
+    }
+};
+
+export const deleteDrawing = async (id) => {
+    try {
+        const response = await axios.delete(`/synthdata/delete/${id}`);
+        return response.data;
+    } catch (error) {
+        console.error('Error deleting drawing', error);
         throw error;
     }
 };

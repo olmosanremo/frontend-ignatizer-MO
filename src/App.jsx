@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import MinimalDrawingCanvas from './components/MinimalDrawingCanvas';
 import ControlPanel from './components/ControlPanel';
-import { saveDrawing, loadDrawing, updateDrawing } from './backendApi/api';
+import { saveDrawing, loadDrawing, updateDrawing, getAllDrawings, deleteDrawing } from './backendApi/api';
 
 const App = () => {
     const [lines, setLines] = useState({ red: [], yellow: [], green: [] });
@@ -9,6 +9,7 @@ const App = () => {
     const [isErasing, setIsErasing] = useState(false);
     const [trackName, setTrackName] = useState('');
     const [originalTrackName, setOriginalTrackName] = useState('');
+    const [drawings, setDrawings] = useState([]);
     const canvasRef = useRef(null);
 
     const toggleEraseMode = () => {
@@ -53,9 +54,38 @@ const App = () => {
         }
     };
 
+    const handleFetchDrawings = async () => {
+        try {
+            const allDrawings = await getAllDrawings();
+            console.log('Fetched Drawings:', allDrawings);
+            if (Array.isArray(allDrawings)) {
+                setDrawings(allDrawings);
+            } else {
+                console.error('Unexpected response format:', allDrawings);
+                alert('Unexpected response format.');
+            }
+        } catch (error) {
+            alert('Error fetching drawings.');
+        }
+    };
+
+    const handleDelete = async (id) => {
+        try {
+            await deleteDrawing(id);
+            alert('Drawing deleted!');
+            handleFetchDrawings();
+        } catch (error) {
+            alert('Error deleting drawing.');
+        }
+    };
+
     const clearDrawing = () => {
         setLines({ red: [], yellow: [], green: [] });
     };
+
+    useEffect(() => {
+        handleFetchDrawings();
+    }, []);
 
     return (
         <div>
@@ -71,6 +101,17 @@ const App = () => {
                 <button onClick={handleSave}>Save Drawing</button>
                 <button onClick={handleLoad}>Load Drawing</button>
                 <button onClick={clearDrawing}>Clear Drawing</button>
+            </div>
+            <div>
+                <h2>All Drawings</h2>
+                <ul>
+                    {drawings.map(drawing => (
+                        <li key={drawing._id}>
+                            {drawing.name} (ID: {drawing._id})
+                            <button onClick={() => handleDelete(drawing._id)}>Delete</button>
+                        </li>
+                    ))}
+                </ul>
             </div>
         </div>
     );
